@@ -1,0 +1,206 @@
+all_the_decks_I_have_seen = {}
+all_the_decks_I_have_seen[1] = {deck_guid = "abcdefg", 
+                               trick = 1,
+                               took_trick = "player1",
+                               cards_in_deck = {
+                                    "aa", "bb", "cc", "dd"
+                                }
+                            }
+
+all_the_decks_I_have_seen[2] = {deck_guid = "hijklmn", 
+                                trick = 2,
+                                took_trick = "player4"}
+
+-- print(all_the_decks_I_have_seen[2]["took_trick"])
+
+function onPickUp(player_color)
+    local deck_guids = {}
+    local deck_guids = get_decks()
+
+    for curr_key, curr_deck_guid in ipairs(deck_guids) do
+        print("onPickup - I am deck number " .. curr_key .. " with GUID: " .. curr_deck_guid)
+        get_card_guids_from_deck_guid(curr_deck_guid)
+    end
+    startLuaCoroutine(Global, "yield_for_many_frames")
+    collect_all_cards_into_a_deck()
+    
+end
+
+function get_decks()
+    local all_objects = getAllObjects()
+    local deck_guids = {}
+    local deck_counter = 1
+    for key, object in ipairs(all_objects) do
+        if object.tag == "Deck" then
+            print("get_decks - Found Deck: " .. object.guid)
+            deck_guids[deck_counter] = object.guid
+            deck_counter = deck_counter + 1
+        end
+    end
+
+    print("get_decks - Found " .. #deck_guids .. " decks.")
+    return deck_guids
+end
+
+function collect_all_cards_into_a_deck()
+    local all_objects = getAllObjects()
+    for object_index, curr_object in ipairs(all_objects) do
+        if curr_object.name == "Card" then
+            -- pile up the cards
+            curr_object.setPosition({x=0, y=2, z=0})
+            curr_object.setRotation({x=180, y=0, z=0})
+            -- curr_object.flip()
+        else
+            print("Not a card. It's a " .. curr_object.name)
+        end
+    end
+end
+
+function yield_for_many_frames()
+    for i=1, 2000 do
+        coroutine.yield(0)
+    end
+    return 1
+end
+
+
+function get_card_guids_from_deck_guid(deck_guid)
+    local my_deck = getObjectFromGUID(deck_guid)
+    
+    -- https://api.tabletopsimulator.com/object/#getobjects
+    -- Returns a Table of sub-Tables, each sub-Table containing data on 1 bagged item. Indexes start at 0.
+    local my_objects = my_deck.getObjects()
+
+    card_guids = {}
+    card_index = 0
+    x=-15.1
+    y=1.04
+    z=-15.1
+    for object_index, curr_object in ipairs(my_objects) do
+        print("object index: " .. object_index)
+        -- From https://api.tabletopsimulator.com/object/#takeobject
+        -- When getting the GUIDs of objects in a container, it is possible items can have the same GUID while 
+        -- in a container. This is because only once two items try to exist at the same time is one of them given 
+        -- a new GUID, and Objects in a container do not currently exist. Removing all Objects from the container 
+        -- at once will force all of them to be given unique GUIDs.
+
+        -- card_table = {
+        --     name             = "Object Name",
+        --     description      = "Object Description",
+        --     guid             = "AAA111",
+        --     index            = 0,
+        --     lua_script       = "Any Lua Script On This Object",
+        --     lua_script_state = "Any JSON Save Data On This Object"
+        -- }
+
+        -- When you take an Object from the container, all higher indexes are reduced by 1 instantly. 
+        -- If you pull more than once Object at once by their index, you must account for this index changing.
+        
+        if curr_object.name == "Card" then
+            -- print("It's a card!")
+            curr_card = my_deck.takeObject({index=0})
+            curr_card.setPosition({x=x, y=y, z=z})
+            x = x + 0.7                              
+            y = y + 0.5
+            z = z + 0.5
+            startLuaCoroutine(Global, "yield_for_frames")
+
+            -- https://api.tabletopsimulator.com/object/#putobject
+            -- container_object.put_object(<An Object to place into the container>)
+            -- print("putting card in temp_deck")
+            -- temp_deck.putObject(curr_card)
+            print("Getting card GUID")
+            card_guids[card_index] = curr_card.getGUID()
+
+            print("Card GUID is ".. card_guids[card_index])
+            card_index = card_index + 1
+            
+            -- Todo: Extract the card, look at it, store it's value
+            
+            -- Extended Debug print that can be read in an "things print out of order" terminal
+            -- for curr_card_key, curr_card_value in pairs(curr_object) do
+                -- print("Deck GUID: " .. deck_guid .. 
+                --       " ObjIndex: " .. object_index .. 
+                --       " Curr Card Key: " .. curr_card_key .. 
+                --       " Curr Card Value: " .. curr_card_value)
+            
+            -- end
+        else
+            print("WARN: It's not a card! It's something with a name of: " .. curr_object.name)
+        end
+
+    end
+    print_table(card_guids)
+end
+
+function create_deck()
+    -- https://api.tabletopsimulator.com/object/#takeobject
+    deck = spawnObject({type = "Deck", 
+                        scale = {x=2, y=2, z=2}, 
+                        position = {x=5, y=5, z=2}
+                      })
+
+    -- x,z are the table surface
+    -- y is above the board
+    -- https://steamcommunity.com/sharedfiles/filedetails/?id=879449506
+    -- Normally, when a script is run, it all activates in one "frame" of the game. 
+    -- A coroutine can pause its running until the next frame, allowing you to chain 
+    -- those pauses together to make your script wait.
+
+    startLuaCoroutine(Global, "yield_for_frames")
+    return deck
+end
+
+function yield_for_frames()
+    coroutine.yield(0)
+    return 1
+end
+
+
+function compare_deck_tables(deck_table_1, deck_table_2)
+    new_decks = {}
+    new_decks_i = 1
+    for deck_table_1_i, deck_table_1_v in ipairs(deck_table_1) do
+        for deck_table_2_i, deck_table_2_v in ipairs(deck_table_2) do
+            match = false
+            if deck_table_1[before_i] == deck_table_2_v then
+                match = true
+                break
+            end
+        end
+
+        if match == false then
+            new_decks[new_decks_i] = deck_table_2_v    
+        end
+        
+    end
+
+    print("Found new decks: ")
+    print_table(new_decks)
+
+    return new_decks    
+end
+
+function print_table(my_table, indent)
+    -- Prints out flat and nested tables
+    if not my_table then
+        print("ERROR: No table to print!")
+        return
+    end
+
+    print("Serializing " .. tostring(my_table))
+    indent = indent or 0
+    header = string.rep("-", indent)
+    for k,v in pairs(my_table) do
+        if type(v) == "table" then
+            indent = indent + 1
+            print_table(v, indent)
+        else
+            print(header, k .. ":" .. v)
+        end
+    end
+end
+
+function no_op()
+    do_nothing = 1
+end
