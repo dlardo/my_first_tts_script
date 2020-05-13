@@ -1,0 +1,31 @@
+function onPickUp(player_color)
+    deck_guids = get_decks()
+    for k, i in ipairs(deck_guids) do
+        disable_deck_formation(i)
+    end
+end
+
+function disable_deck_formation(deck_guid)
+    local deck = getObjectFromGUID(deck_guid)
+    for i,v in pairs(deck.getObjects()) do
+        local noob = deck.takeObject(v)
+        noob.setLuaScript("function filterObjectEnter(obj) return false end")
+        deck.putObject(noob)
+    end
+end
+
+function get_decks()
+    local all_objects = getAllObjects()
+    local deck_guids = {}
+    local deck_counter = 1
+    for key, object in ipairs(all_objects) do
+        if object.tag == "Deck" then
+            print("get_decks - Found Deck: " .. object.guid)
+            deck_guids[deck_counter] = object.guid
+            deck_counter = deck_counter + 1
+        end
+    end
+
+    print("get_decks - Found " .. #deck_guids .. " decks.")
+    return deck_guids
+end
