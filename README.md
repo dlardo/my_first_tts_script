@@ -20,9 +20,14 @@ For example, `Global.-1.ttslua` contains:
   * Syntax Highlighting
   * Automatically installs [TTS Console](https://github.com/onelivesleft/Console)
     * Adds a > debugging console into TTS's chat
+  * Usage
+    * Ctrl+Alt+` : Open TTS Console++
+    * Ctrl+Alt+L: Get Lua Scripts
+    * Ctrl+Alt+S: Save And Play
 
 * [EmmyLua](https://github.com/EmmyLua/VSCode-EmmyLua) 
   * Depends on JDK 8 (aka 1.8) `choco install jdk8`
+  * Lua IDE/Debugger Plugin for VSCode
   
 * [TTS Community Moonsharp debugger](https://github.com/tts-community/moonsharp)
   * VSCode integration
