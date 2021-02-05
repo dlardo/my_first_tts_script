@@ -5,7 +5,7 @@ Learning Lua and TableTop Simulator
 * The main mod needs to be downloaded from [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=2086541048). (Authentication Required)
 * It should have 2 files that point to the github tracked source code. 
 * Your scripts and UI should be nothing more than a single `#include file` or `<Include src="file"/>`
-  * Note: If you have the Moonsharp debugger installed (see below) then you will see a lot of code from that too.
+  * Note: If you have the TTS Console installed (see below) then you will see a lot of code from that too.
 
 For example, `Global.-1.ttslua` contains:
 ```
