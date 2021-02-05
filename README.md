@@ -18,6 +18,8 @@ For example, `Global.-1.ttslua` contains:
 * VSCode [Tabletop Simulator Lua extension](https://github.com/rolandostar/tabletopsimulator-lua-vscode)
   * Gets/Sends scripts
   * Syntax Highlighting
+  * Automatically installs [TTS Console](https://github.com/onelivesleft/Console)
+    * Adds a > debugging console into TTS's chat
 
 * [EmmyLua](https://github.com/EmmyLua/VSCode-EmmyLua) 
   * Depends on JDK 8 (aka 1.8) `choco install jdk8`
@@ -27,5 +29,4 @@ For example, `Global.-1.ttslua` contains:
   * Step through code
   * Real time variable inspection
 
-* [TTS Console](https://github.com/onelivesleft/Console)
-  * Adds a > debugging console into TTS's chat
+
