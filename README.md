@@ -33,5 +33,10 @@ For example, `Global.-1.ttslua` contains:
   * VSCode integration
   * Step through code
   * Real time variable inspection
+  * Install Notes
+    * Requires copying the MoonsharpDef.dll from the release into the `TTS Install Folder\Tabletop Simulator_Data\Managed`
+    * [How to setup a launch.json](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations) to enable the debugger 
 
-
+## Helpful Directories
+* Saved Games: `C:\Users\dlardo\Documents\My Games\Tabletop Simulator\Saves`
+* TTS Install Folder: `C:\Program Files (x86)\Steam\steamapps\common\Tabletop Simulator\`
